@@ -4,7 +4,10 @@
   "description": "MongoDB NodeJS Express User Authentication API",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon server.js",
+    "mocha": "mocha --exit --file tests/user.test.js '!(node_modules)/**/*test.js'",
+    "mocha-exit0": "mocha --exit --file tests/user.test.js '!(node_modules)/**/*test.js' || true",
+    "test": "mocha **/*.test.js"
   },
   "repository": {
     "type": "git",
