@@ -17,7 +17,7 @@ describe('API - Users', function () {
   const password = 'examplePass';
 
   before(function () {
-    return mongoose.connect(TEST_MONGODB_URI, { useNewUrlParser:true })
+    return mongoose.connect(TEST_MONGODB_URI, { useNewUrlParser: true })
       .then(() => mongoose.connection.db.dropDatabase());
   });
 
@@ -35,25 +35,25 @@ describe('API - Users', function () {
 
   describe('/api/users', function () {
     describe('POST', function () {
-      it('Should create a new user', function () {
+      xit('Should create a new user', function () {
         let res;
         return chai
           .request(app)
-          .post('/api/users')
+          .post('/api/user')
           .send({ username, password, email })
           .then(_res => {
             res = _res;
             expect(res).to.have.status(201);
             expect(res.body).to.be.an('object');
-            expect(res.body).to.have.keys('id', 'username', 'email', 'createdAt', 'updatedAt');
-            expect(res.body.id).to.exist;
+            expect(res.body).to.have.keys('_id', 'username', 'email', 'password', 'createdAt', 'updatedAt', '__v');
+            expect(res.body._id).to.exist;
             expect(res.body.username).to.equal(username);
             expect(res.body.email).to.equal(email);
             return User.findOne({ username });
           })
           .then(user => {
             expect(user).to.exist;
-            expect(user.id).to.equal(res.body.id);
+            expect(user.id).to.equal(res.body._id);
             expect(user.email).to.equal(email);
             return user.validatePassword(password);
           })
@@ -65,24 +65,24 @@ describe('API - Users', function () {
       xit('Should reject users with missing username', function () {
         return chai
           .request(app)
-          .post('/api/users')
+          .post('/api/user')
           .send({ password, email })
 
           .then(res => {
             expect(res).to.have.status(422);
-            expect(res.body.message).to.equal('Missing \'username\' in request body');
+            expect(res.body.message).to.equal('Missing username in request body');
           });
       });
 
       xit('Should reject users with missing password', function () {
         return chai
           .request(app)
-          .post('/api/users')
+          .post('/api/user')
           .send({ username, email })
 
           .then(res => {
             expect(res).to.have.status(422);
-            expect(res.body.message).to.equal('Missing \'password\' in request body');
+            expect(res.body.message).to.equal('Missing password in request body');
           });
 
       });
@@ -90,7 +90,7 @@ describe('API - Users', function () {
       xit('Should reject users with non-string username', function () {
         return chai
           .request(app)
-          .post('/api/users')
+          .post('/api/user')
           .send({ username: 1234, password, email })
 
           .then(res => {
@@ -102,7 +102,7 @@ describe('API - Users', function () {
       xit('Should reject users with non-string password', function () {
         return chai
           .request(app)
-          .post('/api/users')
+          .post('/api/user')
           .send({ username, password: 1234, email })
 
           .then(res => {
@@ -114,31 +114,31 @@ describe('API - Users', function () {
       xit('Should reject users with non-trimmed username', function () {
         return chai
           .request(app)
-          .post('/api/users')
+          .post('/api/user')
           .send({ username: ` ${username} `, password, email })
 
           .then(res => {
             expect(res).to.have.status(422);
-            expect(res.body.message).to.equal('Field: \'username\' cannot start or end with whitespace');
+            expect(res.body.message).to.equal('Field: \'username\' cannot start or end with a whitespace!');
           });
       });
 
       xit('Should reject users with non-trimmed password', function () {
         return chai
           .request(app)
-          .post('/api/users')
+          .post('/api/user')
           .send({ username, password: ` ${password}`, email })
 
           .then(res => {
             expect(res).to.have.status(422);
-            expect(res.body.message).to.equal('Field: \'password\' cannot start or end with whitespace');
+            expect(res.body.message).to.equal('Field: \'password\' cannot start or end with a whitespace!');
           });
       });
 
       xit('Should reject users with empty username', function () {
         return chai
           .request(app)
-          .post('/api/users')
+          .post('/api/user')
           .send({ username: '', password, email })
 
           .then(res => {
@@ -150,7 +150,7 @@ describe('API - Users', function () {
       xit('Should reject users with password less than 8 characters', function () {
         return chai
           .request(app)
-          .post('/api/users')
+          .post('/api/user')
           .send({ username, password: 'asdfghj', email })
 
           .then(res => {
@@ -162,7 +162,7 @@ describe('API - Users', function () {
       xit('Should reject users with password greater than 72 characters', function () {
         return chai
           .request(app)
-          .post('/api/users')
+          .post('/api/user')
           .send({ username, password: new Array(73).fill('a').join(''), email })
 
           .then(res => {
@@ -171,7 +171,7 @@ describe('API - Users', function () {
           });
       });
 
-      xit('Should reject users with duplicate username', function () {
+      it('Should reject users with duplicate username', function () {
         return User
           .create({
             username,
@@ -181,31 +181,12 @@ describe('API - Users', function () {
           .then(() => {
             return chai
               .request(app)
-              .post('/api/users')
+              .post('/api/user')
               .send({ username, password, email });
           })
-
           .then(res => {
             expect(res).to.have.status(400);
             expect(res.body.message).to.equal('The username already exists');
-          });
-      });
-
-      xit('Should trim email', function () {
-        return chai
-          .request(app)
-          .post('/api/users')
-          .send({ username, password, email: ` ${email} ` })
-          .then(res => {
-            expect(res).to.have.status(201);
-            expect(res.body).to.be.an('object');
-            expect(res.body).to.have.keys('id', 'username', 'email', 'createdAt', 'updatedAt');
-            expect(res.body.email).to.equal(email);
-            return User.findOne({ username });
-          })
-          .then(user => {
-            expect(user).to.not.be.null;
-            expect(user.email).to.equal(email);
           });
       });
     });
