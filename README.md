@@ -150,12 +150,12 @@ After all this, our file tree should look like this: (Not counting node_modules 
 programName-server
 |
 |_users
-|          |_models
-|          |          |_user.js
-|          |
-|          |_routes
-|                       |_ auth.js
-|                       |_user.js
+|     |_models
+|     |      |_user.js
+|     |
+|     |_routes
+|            |_ auth.js
+|            |_user.js
 |_server.js
 ```
 
@@ -366,16 +366,16 @@ Let's navigate back to our root directory for a moment and create a `config.js` 
 programName-server
 |
 |_auth
-|        |_jwt.js
-|        |_local.js
+|    |_jwt.js
+|    |_local.js
 |
 |_users
-|          |_models
-|          |          |_user.js
-|          |
-|          |_routes
-|                       |_ auth.js
-|                       |_user.js
+|     |_models
+|     |     |_user.js
+|     |
+|     |_routes
+|           |_ auth.js
+|           |_user.js
 |_config.js
 |_server.js
 ```
@@ -466,16 +466,16 @@ Now, our file tree should look like this:
 programName-server
 |
 |_ auth
-|        |_ jwt.js
-|        |_ local.js
+|     |_ jwt.js
+|     |_ local.js
 |
 |_ users
-|          |_ models
-|          |          |_ user.js
-|          |
-|          |_ routes
-|                       |_  auth.js
-|                       |_ user.js
+|     |_ models
+|     |       |_ user.js
+|     |
+|     |_ routes
+|             |_  auth.js
+|             |_ user.js
 |_ config.js
 |_ .env
 |_ .gitignore
