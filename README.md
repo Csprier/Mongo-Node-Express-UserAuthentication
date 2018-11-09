@@ -1,7 +1,5 @@
 # Mongo-Node-Express-UserAuthentication
 
-User Authentication using MongoDB, Express and NodeJS.
-
 First, we'll make a directory to house our server. I'm on macOS, so all the commands seen in this guide will be tailored to that. So, open up your terminal and enter these commands! :D
 
 `$ cd ~/Desktop`
@@ -40,7 +38,7 @@ You can do this individually, or in one ridiculously long command, and a slightl
     "mocha": "^5.2.0"
   }
   ```
-
+___
 
 Now that we have our package.json file in order and our node_modules folder is created, let's create our `server.js` file. This is the entry point of our app, so we'll need to modify the "main" section of the package.json to reflect this; or, if you're lazy, name `server.js` as `index.js` and leave your package.json alone(it is defaulted as index.js). I like to rename it for naming-convention's sake.
 
@@ -55,7 +53,7 @@ const passport = require('passport');
 
 We use `require('dotenv').config()` to cast some magic to help us with our environment variables. (I will elaborate on this at a later time).
 
-
+___
 Alright, we're looking good so far! Next, will instantiate an express instance, set up our logger, cors, and body parser.
 ```
 const localStrategy = require('./auth/local');
@@ -93,7 +91,6 @@ app.use('/api/auth', authRouter);
 app.use('/api/user', userRouter);
 ```
 
-
 Alright, now for a little bit of error handling. In the lines under what we just wrote, add this snippet:
 ```
 // Catch-all Error handler
@@ -128,6 +125,7 @@ if (require.main === module) {
 
 module.exports = { app }; // Last line of the file
 ```
+___
 
 User Model and Routes
 
@@ -195,7 +193,7 @@ userSchema.statics.hashPassword = function (password) {
 
 module.exports = mongoose.model('User', userSchema);
 ```
-
+___
 
 Now that the User schema is created, we're going to set up our endpoints. We'll start with the POST request to create a user. Open up our `user/routes/user.js` and import our dependencies.
 ```
@@ -305,6 +303,7 @@ Third we check that fields are trimmed as needed, so there are no extra white-sp
 Then we'll check to make sure the given fields are valid lengths; not to small, not too large.
 Then finally, we create our new User and modify the password to be the newly hashed version of the password. With that result, if everything was successful, we'll send a 201 status; and if the email was already used, we'll catch that and send an error.
 
+___
 
 That should work. You can check in postman, but if it shouldn't work, don't fret, by the end of this, everything will work. :D You'll need to start your mongo server and nodemon server.js in your terminal to make this possible.
 
@@ -360,6 +359,7 @@ module.exports = router; // Last line of the file
 ```
 
 So, what's happening here?  We have our endpoints setup for logging in as a user and refreshing the JWT token. This is important for getting the JWT for the user, so we can keep things like their data protected. Finally, we have a function to generate the auth token. Our authentication is almost complete! Mwahaha! *lightning cracks in the sky above* - *clears throat*. 
+___
 
 Let's navigate back to our root directory for a moment and create a `config.js` file. After that, we're going to create a folder in the same root directory; let's call it 'auth', and inside that folder we'll create two files: `jwt.js` and `local.js`. So, now our file tree should look like this:
 ```
@@ -401,6 +401,7 @@ module.exports = jwtStrategy; // Last line of the file
 ```
 We import our dependencies at the top, create an options object, and create our strategy before exporting it! :D
 
+___
 
 Now open up `~/auth/local.js` and add this code:
 ```
@@ -455,7 +456,7 @@ module.exports = {
 };
 ```
 You'll need to modify the localhost programNames accordingly but other than that, that's all we are adding in this file.
-
+___
 
 Okay, my friends, that is all of the heavy lifting. Now we just have to account for a few more things and we'll be ready to go with fully functional User Authentication! Are you excited?! You should be, this is fancy stuff.
 So, next we need to account for some version control. We don't want our `.env` file that we'll create to be shown in your repository, among other files.
@@ -579,6 +580,7 @@ typings/
 
 .idea
 ```
+___
 
 Okay, last but certainly not least, we need to setup our `./.env` file. This will contain only 2 lines.
 ```
