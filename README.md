@@ -146,6 +146,7 @@ From our root directory of our server, let's create some folders:
 Okay, that's a fair bit of terminal voodoo, so let's recap! Starting in our root directory, we make a directory users. Next we change into the directory we just made and make two new directories; models and routes. Then, we change into the models directory and create a file, user.js. After that, with a trickier command, we change directories by going back up one level in our tree and then into the routes directory. Followed by creating two files; user and auth.js. Then, for good measure, as to not forget later, we change back to the root directory. 
 
 After all this, our file tree should look like this: (Not counting node_modules and other files)
+```
 programName-server
 |
 |_users
@@ -156,6 +157,7 @@ programName-server
 |                       |_ auth.js
 |                       |_user.js
 |_server.js
+```
 
 Okay, now we're ready to edit the files we just created! :D
 
@@ -360,7 +362,7 @@ module.exports = router; // Last line of the file
 So, what's happening here?  We have our endpoints setup for logging in as a user and refreshing the JWT token. This is important for getting the JWT for the user, so we can keep things like their data protected. Finally, we have a function to generate the auth token. Our authentication is almost complete! Mwahaha! *lightning cracks in the sky above* - *clears throat*. 
 
 Let's navigate back to our root directory for a moment and create a `config.js` file. After that, we're going to create a folder in the same root directory; let's call it 'auth', and inside that folder we'll create two files: `jwt.js` and `local.js`. So, now our file tree should look like this:
-
+```
 programName-server
 |
 |_auth
@@ -376,7 +378,7 @@ programName-server
 |                       |_user.js
 |_config.js
 |_server.js
-
+```
 Now we're ready to finalize our authentication, give or take a few added steps we'll make up for later. So! Here we go!
 
 Open up `~/auth/jwt.js` and add this code:
@@ -460,7 +462,7 @@ So, next we need to account for some version control. We don't want our `.env` f
 Let's create a few more files: `./.env`, `./db-mongoose`, and `./gitignore`.
 
 Now, our file tree should look like this:
-
+```
 programName-server
 |
 |_ auth
@@ -479,7 +481,7 @@ programName-server
 |_ .gitignore
 |_ db-mongoose.js
 |_ server.js
-
+```
 
 Alright, let's get our `./db-mongoose.js` file wrapped up. Open it and let's add:
 ```
