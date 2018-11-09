@@ -16,7 +16,7 @@ You can do this individually, or in one ridiculously long command, and a slightl
 
 `$ npm install mocha chai chai-http cross-env --save-dev`
 
- Alteratively, copy/paste the following and enter in `npm install`.
+ Alteratively, copy/paste the following into your package.json file and run `npm install` after you save it.
 ```
 "dependencies": {
     "bcryptjs": "^2.4.3",
