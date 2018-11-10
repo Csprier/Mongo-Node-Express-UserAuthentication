@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "chai-exclude": "^1.0.10",
     "cors": "^2.8.5",
     "dotenv": "^6.1.0",
     "express": "^4.16.4",

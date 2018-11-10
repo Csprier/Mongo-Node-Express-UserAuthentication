@@ -98,7 +98,7 @@ router.post('/', (req, res, next) => {
 			.then(result => {
 				return res.status(201)
 					.location(`/api/user/${result.id}`)
-					.json(result);
+					.json({ id: result._id, username: result.username, email: result.email });
 			})
 			.catch(err => {
 				if (err.code === 11000) {

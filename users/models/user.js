@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
 	password: { type: String, require: true },
 }, { timestamps: true });
 
-userSchema.set('toObject', {
+userSchema.set('toJSON', {
 	transform: (doc, ret) => {
 		ret.id = ret._id;
 		delete ret._id;
