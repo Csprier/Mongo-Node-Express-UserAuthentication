@@ -12,7 +12,6 @@ const expect = chai.expect;
 chai.use(chaiHttp);
 
 describe('API - Login', function () {
-
   let token;
   const _id = '333333333333333333333333';
   const email = 'example@user.com';
@@ -42,7 +41,7 @@ describe('API - Login', function () {
   });
 
   describe('API - /api/login', function () {
-    xit('Should return a valid auth token', function () {
+    it('Should return a valid auth token', function () {
       return chai
         .request(app)
         .post('/api/auth/login')
