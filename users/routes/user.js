@@ -23,7 +23,7 @@ router.post('/', (req, res, next) => {
 	const nonStringField = stringFields.find(field => field in req.body && typeof req.body[field] !== 'string');
 
 	if (nonStringField) {
-		const err = new Error(`Field: '${nonStringField}' must be typeof String`);
+		const err = new Error(`Field: '${nonStringField}' must be type String`);
 		err.status = 422;
 		return next(err);
 	}
@@ -38,6 +38,14 @@ router.post('/', (req, res, next) => {
 		return next(err);
 	}
 
+	// Check that the fields are not just whitespaces
+	const whiteSpaceField = requiredFields.find(field => field in req.body && req.body[field].trim().length === 0)
+	if (whiteSpaceField) {
+		const err = new Error(`Field: '${whiteSpaceField}' must be at least 1 characters long`);
+		err.status = 422;
+		return next(err);
+	}	
+
 	const sizedFields = {
 		username: { min: 1 },
 		email: { min: 6 },
@@ -45,12 +53,12 @@ router.post('/', (req, res, next) => {
 	};
 
 	const tooSmall = Object.keys(sizedFields).find(field => {
-		if(req.body[field])
+		if (req.body[field])
 			return 'min' in sizedFields[field] && req.body[field].trim().length < sizedFields[field].min;
 	});
 
 	const tooLarge = Object.keys(sizedFields).find(field => {
-		if(req.body[field])
+		if (req.body[field])
 			return 'max' in sizedFields[field] && req.body[field].trim().length > sizedFields[field].max;
 	});
 
@@ -63,7 +71,7 @@ router.post('/', (req, res, next) => {
 
 	if (tooLarge) {
 		const max = sizedFields[tooLarge].max;
-		const err = new Error(`Field: '${tooLarge}' must be at most ${max} characters long `);
+		const err = new Error(`Field: '${tooLarge}' must be at most ${max} characters long`);
 		err.status = 422;
 		return next(err);
 	}
@@ -71,27 +79,36 @@ router.post('/', (req, res, next) => {
 	// Create the new user
 	let { username, email, password } = req.body;
 
-	return User.hashPassword(password)
-		.then(digest => {
-			const newUser = {
-				username,
-				email,
-				password: digest
-			};
-			return User.create(newUser);
-		})
-		.then(result => {
-			return res.status(201)
-				.location(`/api/user/${result.id}`)
-				.json(result);
-		})
-		.catch(err => {
-			if (err.code === 11000) {
-				err = new Error('The email already exists');
-				err.status = 400;
-			}
+	// Check if a username already exists
+	User.findOne({ username }, function(err, user) {
+		if (user) {
+			err = new Error('The username already exists');
+			err.status = 400;
 			next(err);
-		});
+		} else {
+			return User.hashPassword(password)
+			.then(digest => {
+				const newUser = {
+					username,
+					email,
+					password: digest
+				};
+				return User.create(newUser);
+			})
+			.then(result => {
+				return res.status(201)
+					.location(`/api/user/${result.id}`)
+					.json({ id: result._id, username: result.username, email: result.email });
+			})
+			.catch(err => {
+				if (err.code === 11000) {
+					err = new Error('The username already exists');
+					err.status = 400;
+				}
+				next(err);
+			});
+		}
+	});
 });
 
 /* =================================================================================== */
