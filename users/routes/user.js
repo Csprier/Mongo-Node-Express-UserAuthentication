@@ -85,30 +85,30 @@ router.post('/', (req, res, next) => {
 			err = new Error('The username already exists');
 			err.status = 400;
 			next(err);
+		} else {
+			return User.hashPassword(password)
+			.then(digest => {
+				const newUser = {
+					username,
+					email,
+					password: digest
+				};
+				return User.create(newUser);
+			})
+			.then(result => {
+				return res.status(201)
+					.location(`/api/user/${result.id}`)
+					.json(result);
+			})
+			.catch(err => {
+				if (err.code === 11000) {
+					err = new Error('The username already exists');
+					err.status = 400;
+				}
+				next(err);
+			});
 		}
 	});
-
-	return User.hashPassword(password)
-		.then(digest => {
-			const newUser = {
-				username,
-				email,
-				password: digest
-			};
-			return User.create(newUser);
-		})
-		.then(result => {
-			return res.status(201)
-				.location(`/api/user/${result.id}`)
-				.json(result);
-		})
-		.catch(err => {
-			if (err.code === 11000) {
-				err = new Error('The username already exists');
-				err.status = 400;
-			}
-			next(err);
-		});
 });
 
 /* =================================================================================== */

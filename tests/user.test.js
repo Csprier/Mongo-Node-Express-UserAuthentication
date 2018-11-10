@@ -35,7 +35,7 @@ describe('API - Users', function () {
 
   describe('/api/users', function () {
     describe('POST', function () {
-      xit('Should create a new user', function () {
+      it('Should create a new user', function () {
         let res;
         return chai
           .request(app)
@@ -62,7 +62,7 @@ describe('API - Users', function () {
           });
       });
 
-      xit('Should reject users with missing username', function () {
+      it('Should reject users with missing username', function () {
         return chai
           .request(app)
           .post('/api/user')
@@ -74,7 +74,7 @@ describe('API - Users', function () {
           });
       });
 
-      xit('Should reject users with missing password', function () {
+      it('Should reject users with missing password', function () {
         return chai
           .request(app)
           .post('/api/user')
@@ -87,7 +87,7 @@ describe('API - Users', function () {
 
       });
 
-      xit('Should reject users with non-string username', function () {
+      it('Should reject users with non-string username', function () {
         return chai
           .request(app)
           .post('/api/user')
@@ -99,7 +99,7 @@ describe('API - Users', function () {
           });
       });
 
-      xit('Should reject users with non-string password', function () {
+      it('Should reject users with non-string password', function () {
         return chai
           .request(app)
           .post('/api/user')
@@ -111,7 +111,7 @@ describe('API - Users', function () {
           });
       });
 
-      xit('Should reject users with non-trimmed username', function () {
+      it('Should reject users with non-trimmed username', function () {
         return chai
           .request(app)
           .post('/api/user')
@@ -123,7 +123,7 @@ describe('API - Users', function () {
           });
       });
 
-      xit('Should reject users with non-trimmed password', function () {
+      it('Should reject users with non-trimmed password', function () {
         return chai
           .request(app)
           .post('/api/user')
@@ -135,7 +135,7 @@ describe('API - Users', function () {
           });
       });
 
-      xit('Should reject users with empty username', function () {
+      it('Should reject users with empty username', function () {
         return chai
           .request(app)
           .post('/api/user')
@@ -147,7 +147,7 @@ describe('API - Users', function () {
           });
       });
 
-      xit('Should reject users with password less than 8 characters', function () {
+      it('Should reject users with password less than 8 characters', function () {
         return chai
           .request(app)
           .post('/api/user')
@@ -159,7 +159,7 @@ describe('API - Users', function () {
           });
       });
 
-      xit('Should reject users with password greater than 72 characters', function () {
+      it('Should reject users with password greater than 72 characters', function () {
         return chai
           .request(app)
           .post('/api/user')
