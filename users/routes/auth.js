@@ -20,7 +20,7 @@ router.post('/login', localAuth, (req, res) => {
 router.use('/refresh', passport.authenticate('jwt', { session: false, failWithError: true }));
 
 router.post('/refresh', (req, res, next) => {
-	User.find({ _id: req.user.id })
+	User.find({ id: req.user.id })
   .then(user => {
     const authToken = createAuthToken(user[0]);
     res.json({ authToken });

@@ -45,15 +45,15 @@ describe('API - Users', function () {
             res = _res;
             expect(res).to.have.status(201);
             expect(res.body).to.be.an('object');
-            expect(res.body).to.have.keys('_id', 'username', 'email', 'password', 'createdAt', 'updatedAt', '__v');
-            expect(res.body._id).to.exist;
+            expect(res.body).to.have.keys('id', 'username', 'email');
+            expect(res.body.id).to.exist;
             expect(res.body.username).to.equal(username);
             expect(res.body.email).to.equal(email);
             return User.findOne({ username });
           })
           .then(user => {
             expect(user).to.exist;
-            expect(user.id).to.equal(res.body._id);
+            expect(user.id).to.equal(res.body.id);
             expect(user.email).to.equal(email);
             return user.validatePassword(password);
           })

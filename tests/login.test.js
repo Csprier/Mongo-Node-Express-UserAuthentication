@@ -44,7 +44,7 @@ describe('API - Login', function () {
     return mongoose.disconnect();
   });
 
-  describe.only('API - /api/auth/login', function () {
+  describe('API - /api/auth/login', function () {
     it('Should return a valid auth token', function () {
       return chai
         .request(app)
@@ -56,15 +56,15 @@ describe('API - Login', function () {
           expect(res.body.authToken).to.be.a('string');
 
           const payload = jwt.verify(res.body.authToken, JWT_SECRET);
-          console.log('PAYLOAD: ', JSON.stringify(payload, null, 2));
+          // console.log('PAYLOAD: ', JSON.stringify(payload, null, 2));
           expect(payload.user).to.not.have.property('password');
 					expect(payload.user).excluding(['createdAt', 'updatedAt']).to.deep.equal({ id: payload.user.id, username: payload.user.username, email: payload.user.email });
         });
     });
 
-    xit('Should reject requests without credentials', function () {
+    it('Should reject requests without credentials', function () {
       return chai.request(app)
-        .post('/api/login')
+        .post('/api/auth/login')
         .send({})
         .then(res => {
           expect(res).to.have.status(400);
@@ -73,9 +73,9 @@ describe('API - Login', function () {
         });
     });
 
-    xit('Should reject requests with empty string username', function () {
+    it('Should reject requests with empty string username', function () {
       return chai.request(app)
-        .post('/api/login')
+        .post('/api/auth/login')
         .send({ username: '', password })
         .then(res => {
           expect(res).to.have.status(400);
@@ -84,9 +84,9 @@ describe('API - Login', function () {
         });
     });
 
-    xit('Should reject requests with empty string password', function () {
+    it('Should reject requests with empty string password', function () {
       return chai.request(app)
-        .post('/api/login')
+        .post('/api/auth/login')
         .send({ username, password: '' })
         .then(res => {
           expect(res).to.have.status(400);
@@ -95,9 +95,9 @@ describe('API - Login', function () {
         });
     });
 
-    xit('Should reject requests with incorrect username', function () {
+    it('Should reject requests with incorrect username', function () {
       return chai.request(app)
-        .post('/api/login')
+        .post('/api/auth/login')
         .send({ username: 'wrongUsername', password: 'password' })
         .then(res => {
           expect(res).to.have.status(401);
@@ -107,42 +107,42 @@ describe('API - Login', function () {
     });
   });
 
-  describe('/api/refresh', function () {
-    xit('should reject requests with no credentials', function () {
+  describe('/api/auth/refresh', function () {
+    it('should reject requests with no credentials', function () {
       return chai.request(app)
-        .post('/api/refresh')
+        .post('/api/auth/refresh')
         .then(res => {
           expect(res).to.have.status(401);
         });
     });
 
-    xit('should reject requests with an invalid token', function () {
-      token = jwt.sign({ username, password, fullname }, 'Incorrect Secret');
+    it('should reject requests with an invalid token', function () {
+      token = jwt.sign({ username, password, email }, 'Incorrect Secret');
       return chai.request(app)
-        .post('/api/refresh')
+        .post('/api/auth/refresh')
         .set('Authorization', `Bearer ${token}`)
         .then(res => {
           expect(res).to.have.status(401);
         });
     });
 
-    xit('should reject requests with an expired token', function () {
-      token = jwt.sign({ username, password, fullname }, JWT_SECRET, { subject: username, expiresIn: Math.floor(Date.now() / 1000) - 10 });
+    it('should reject requests with an expired token', function () {
+      token = jwt.sign({ username, password, email }, JWT_SECRET, { subject: username, expiresIn: Math.floor(Date.now() / 1000) - 10 });
       return chai.request(app)
-        .post('/api/refresh')
+        .post('/api/auth/refresh')
         .set('Authorization', `Bearer ${token}`)
         .then(res => {
           expect(res).to.have.status(401);
         });
     });
 
-    xit('should return a valid auth token with a newer expiry date', function () {
-      const user = { username, fullname };
+    it('should return a valid auth token with a newer expiry date', function () {
+      const user = { username, email };
       const token = jwt.sign({ user }, JWT_SECRET, { subject: username, expiresIn: '1m' });
       const decoded = jwt.decode(token);
 
       return chai.request(app)
-        .post('/api/refresh')
+        .post('/api/auth/refresh')
         .set('Authorization', `Bearer ${token}`)
         .then(res => {
           expect(res).to.have.status(200);
@@ -151,7 +151,7 @@ describe('API - Login', function () {
           expect(authToken).to.be.a('string');
 
           const payload = jwt.verify(authToken, JWT_SECRET);
-          expect(payload.user).to.deep.equal({ username, fullname });
+          expect(payload.user).excluding(['createdAt', 'updatedAt']).to.deep.equal({ id: payload.user.id, username, email });
           expect(payload.exp).to.be.greaterThan(decoded.exp);
         });
     });
