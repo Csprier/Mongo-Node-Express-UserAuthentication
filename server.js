@@ -25,18 +25,36 @@ app.use(
 );
 
 // CORS
-app.use(cors({ origin: CLIENT_ORIGIN }));
+// ===============================================================================================
+app.use(
+  cors({ origin: CLIENT_ORIGIN })
+);
+app.use(function(req, res, next) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, X-Access-Token, XKey, Authorization');
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+app.options('*', cors());
 
+// ===============================================================================================
 // Parse request body
 app.use(express.json());
 
-// Auth
+// ===============================================================================================
+// Utilize the given `strategy`
 passport.use(localStrategy);
 passport.use(jwtStrategy);
 
 // Endpoints
 app.use('/api/auth', authRouter);
 app.use('/api/user', userRouter);
+
+// Query to test connection of the http server
+app.get('/', function (req, res) {
+  res.send('hello world');
+});
 
 // Catch-all Error handler
 // Add NODE_ENV check to prevent stacktrace leak
@@ -48,21 +66,31 @@ app.use(function (err, req, res, next) {
 	});
 });
 
-// RUN SERVER FUNCTION
-function runServer(port = PORT) {
-	const server = app
-		.listen(port, () => {
-			console.info(`App listening on port ${server.address().port}`);
-		})
-		.on('error', err => {
-			console.error('Express failed to start');
-			console.error(err);
-		});
-}
-
+// ===============================================================================================
+// Listen for incoming connections
 if (require.main === module) {
-	dbConnect();
-	runServer();
+  const options = {
+    useNewUrlParser: true
+  }
+  
+  mongoose.connect(MONGODB_URI, options)
+    .then(instance => {
+      const conn = instance.connections[0];
+      console.info(`Connected to: mongodb://${conn.host}:${conn.port}/${conn.name}`);
+    })
+    .catch(err => {
+      console.error(`ERROR: ${err.message}`);
+      console.error('\n === Did you remember to start `mongod`? === \n');
+      console.error(err);
+		});
+
+	app.listen(port, () => {
+		console.info(`App listening on port ${server.address().port}`);
+	})
+	.on('error', err => {
+		console.error('Express failed to start');
+		console.error(err);
+	});
 }
 
 module.exports = app;
