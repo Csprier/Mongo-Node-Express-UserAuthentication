@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const mongoose = require('mongoose');
 const cors = require('cors');
 const morgan = require('morgan');
 const passport = require('passport');
@@ -7,7 +8,7 @@ const passport = require('passport');
 const localStrategy = require('./auth/local');
 const jwtStrategy = require('./auth/jwt');
 
-const { PORT, CLIENT_ORIGIN } = require('./config');
+const { PORT, CLIENT_ORIGIN, MONGODB_URI } = require('./config');
 const { dbConnect } = require('./db-mongoose');
 
 // ROUTERS
@@ -84,8 +85,8 @@ if (require.main === module) {
       console.error(err);
 		});
 
-	app.listen(port, () => {
-		console.info(`App listening on port ${server.address().port}`);
+	app.listen(PORT, () => {
+		console.info(`Server listening on ${PORT}!`);
 	})
 	.on('error', err => {
 		console.error('Express failed to start');
